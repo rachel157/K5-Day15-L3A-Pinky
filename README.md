@@ -52,7 +52,8 @@ Trong README này lệnh viết là `python …`; máy nhóm cần `python3` hay
 
 | Lệnh | Làm gì |
 |---|---|
-| `python run.py` | Chạy bản chạy thử (gõ đầu vào, nhận kết quả, kèm số lần gọi model / token) |
+| `python run.py` | Chạy bản chạy thử dòng lệnh (gõ đầu vào, nhận kết quả, kèm số lần gọi model / token) |
+| `python demo/demo_server.py` | **Chạy giao diện Web Demo (http://127.0.0.1:8765):** Trình phát video chuẩn YouTube có mốc Checkpoint nổi trên video (Trắc nghiệm & Tự luận chấm bằng LLM thật), hàng đợi câu hỏi khi tua qua nhiều đoạn, danh sách Checkpoint thu gọn/mở rộng và khung Chat Trợ giảng AI bám phụ đề video |
 | `python run.py check` | Kiểm `eval/benchmark.csv` (6 cột, số câu, `kho` / `tu_choi`, mã `source`, ô trống, dòng mẫu) `eval/metric_spec.yaml` (≥3 metric điền đủ) và `TEAMS.md` (đúng format để BTC quét). Chỉ cảnh báo, không sửa file |
 | `python run.py eval --try` | **Thử nối model:** chạy 3 câu đầu (`--try 5` = 5 câu) → `eval/run-try.csv`. Thấy "Nối model được" là xong. Không tính là một lượt |
 | `python run.py eval` | Chạy cả bộ qua `codebase/agent.py` → `eval/run-1.csv` (lần sau `run-2.csv`…) + `traces/run-1.jsonl`. Mỗi dòng có run ID, model, số lần gọi model / công cụ, token. Model còn giả → chỉ ghi `run-mock.csv`; mọi câu lỗi → `run-error.csv`; Ctrl+C → `run-stopped.csv` — đều **không** được đánh số |
@@ -85,7 +86,7 @@ Nhóm dùng stack khác (Node, Streamlit, notebook…): sửa hàm `run_app()` t
 | Thành phần | Thật / Giả | Ghi chú |
 |---|---|---|
 | Lời gọi AI ở quyết định trung tâm | **Thật** (bắt buộc từ CP3) | Model: `gpt-5.4-mini` (`gpt-5.4-mini-2026-03-17` qua OpenAI API, đo đúng `tokens_in`/`tokens_out` từ `usage`; tự lùi về `fake` khi chưa có `.env`) |
-| Công cụ tra cứu bài giảng (`codebase/tools.py` + `data/lesson.json`) | **Giả lập có kiểm soát (`synthetic`)** | Đọc 13 đoạn tóm tắt mẫu Day01 & Day02 biên tập theo danh mục `kc_code` thật, chưa kết nối trực tiếp DB `preclass-online.com` |
+| Công cụ tra cứu bài giảng (`codebase/tools.py` + `data/lesson.json`) | **Giả lập có kiểm soát (`synthetic`)** | Đọc **15 đoạn** tóm tắt mẫu Day01 & Day02 biên tập theo danh mục `kc_code` thật, chưa kết nối trực tiếp DB `preclass-online.com` |
 | Nhật ký hành vi học tập (`data/preclass`) | **Thật** | Log ẩn danh BTC cấp (dùng đếm bằng chứng qua `evidence/count.py`, không commit file dữ liệu gốc) |
 
 ## Dùng AI vào việc gì

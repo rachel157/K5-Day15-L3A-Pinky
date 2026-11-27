@@ -74,7 +74,7 @@ Nhưng format debug không được làm hỏng format benchmark tự nhiên.
 
 ### 2.3. Mã đoạn chuẩn
 
-Code chỉ được trả mã tồn tại trong `data/lesson.json`. Danh sách mã hiện tại:
+Code chỉ được trả mã tồn tại trong `data/lesson.json`. Danh sách **15 mã đoạn** hiện tại (đã bổ sung đủ 2 đoạn cho `C19`, `C20` ngày 28/11/2026):
 
 ```text
 d01-context-window
@@ -90,6 +90,8 @@ d01-bi-cat-giua-chung
 d02-rule-workflow-agent
 d02-cham-gate
 d01-prompt-injection-safety
+d01-tu-tin-khong-phai-dung
+d01-so-lan-chay-vong-lap
 ```
 
 Nếu thêm hoặc đổi mã:
@@ -491,6 +493,38 @@ Sau đó hoàn thiện slide, README, chi phí, demo và video dự phòng.
 
 ---
 
-## 9. Chốt trách nhiệm
+## 9. Chốt trách nhiệm & Trạng thái Bàn giao Hiện tại (Cập nhật 28/11/2026 — sau khi Tùng push)
 
-> Tùng làm cho Agent chạy đúng theo hợp đồng và cải thiện theo lỗi eval. Hưng biến sản phẩm thành báo cáo có bằng chứng, số liệu và câu chuyện demo. Hồng cung cấp evidence và bộ câu thử. Vũ cung cấp model thật, run, trace và chi phí. Mỗi người bắt đầu phần độc lập ngay; chỉ dừng để thống nhất khi thay đổi interface, mã đoạn, metric hoặc phạm vi an toàn.
+### 9.1. Những gì Nguyễn Hoàng Tùng (Code / Agent / UI Demo) ĐÃ HOÀN THÀNH & PUSH:
+1. **Sửa triệt để toàn bộ lỗi Agent sau Lượt 1 (`codebase/agent.py`, `codebase/tools.py`, `data/lesson.json`):**
+   - Bổ sung 2 đoạn còn thiếu vào `data/lesson.json` (nâng từ 13 lên **15 đoạn**): `d01-tu-tin-khong-phai-dung` (cho câu `C19`) và `d01-so-lan-chay-vong-lap` (cho câu `C20`).
+   - Tinh chỉnh bảng `_ALIASES` trong `codebase/tools.py` (gỡ alias quá rộng `"llm"`, thêm `"chọn tầng model"`, `"cắt cụt"`, `"tự tin và trôi chảy"`, `"vòng lặp sinh token"`) → sửa dứt điểm lỗi chọn sai đoạn ở `C01`, `C15`, `C16`, `C19`, `C20`.
+   - Thêm bộ phát hiện hiểu nhầm `_MISCONCEPTION_PATTERNS` và né trả lời `_EVASION_PATTERNS` trong `evaluate_answer()` → khắc phục lỗi `C03` (*"Luôn chọn model lớn và đắt nhất"* không còn bị chấm nhầm là `correct`).
+   - Thêm nhánh hỏi làm rõ G10 cho `C10` (khi học viên né trả lời và đòi ghi nhận đạt), bổ sung câu nhắc quyền tự do xem tiếp video ở `C22`, và thêm hàm `_trim_to_word_budget()` giữ mọi output `<= 165` từ (đạt 100% metric `do_gon_tai_diem_dung_va_hieu_qua_thuc_thi`).
+   - Bổ sung rào chắn bảo mật 0-token (`_is_out_of_scope`) chặn Prompt Injection, vượt thẩm quyền và chặn việc học viên dùng chùa token vào việc cá nhân ngoài bài học (làm thơ, viết truyện, dự đoán giá vàng/bitcoin...).
+2. **Xây dựng hoàn chỉnh Giao diện Web Demo (`demo/index.html`, `demo/demo_server.py`):**
+   - Chạy bằng lệnh: `python demo/demo_server.py` → mở `http://127.0.0.1:8765`.
+   - Tone màu **Trắng – Xanh lá nhạt** sáng rõ, font chuẩn tiếng Việt `Be Vietnam Pro` + `JetBrains Mono`.
+   - **Trình phát video chuẩn YouTube** hỗ trợ HTTP Range (`206 Partial Content`) tua/nhảy giây mượt, chỉnh âm lượng, chỉnh tốc độ (`0.75x` → `2x`), toàn màn hình, có **6 chấm đánh dấu mốc kết thúc nội dung (Checkpoint Markers)** ngay trên thanh tua.
+   - **Overlay Câu hỏi nổi trên video & Hàng đợi (Queue) khi tua qua nhiều đoạn:** Kết hợp cả **Trắc nghiệm** (click hiện giải thích chi tiết tức thì) và **Tự luận** (gửi LLM thật trong `.env` chấm và gợi ý xem lại phần nào, từ phút:giây nào). Không lộ mã kỹ thuật `d01-...` ra giao diện học viên (chỉ hiển thị Tên phần nội dung tự nhiên + 1 nút nhảy thời gian duy nhất; dữ liệu gốc JSON/trace ẩn gọn trong nút `?` khi di chuột vào).
+   - **Danh sách Checkpoint dưới video** dạng Accordion List (thu gọn / mở rộng từng mục hoặc toàn bộ).
+   - **Cột bên phải là Khung Chat Trợ giảng AI (`POST /api/chat`)** kết nối LLM thật cùng phụ đề video, có bộ lọc 0-token chặn câu hỏi ngoài bài học.
+3. **Hồ sơ & Tài liệu đã cập nhật đồng bộ:**
+   - Đã cập nhật bảng 4 công cụ `@tool` và changelog trong `spec.md` (§4, §10), `data/DATA_CARD.md` (15 đoạn), `README.md`, `AGENTS.md`, `docs/ai-usage.md`, `eval/check_code_metrics.py`, và hoàn thành `reflection/nguyen-hoang-tung.md`.
+   - Đã cấu hình `.gitignore` chặn `*.mp4` để không đẩy file video nặng lên GitHub (tránh lỗi giới hạn 100MB của GitHub).
+
+### 9.2. Việc CẦN LÀM NGAY của 3 thành viên còn lại sau khi `git pull origin main`:
+- **Phạm Nguyên Vũ (DevOps / Eval / Cost):**
+  1. Pull code mới nhất về, chạy `python run.py eval` với API key thật trong `.env` để sinh lượt eval chính thức sau cải tiến (`eval/run-2.csv` + `traces/run-2.jsonl`).
+  2. Chạy `python eval/check_code_metrics.py eval/run-2.csv` kiểm tra 2 metric `code` (kỳ vọng đạt 100% cả Grounding và Độ gọn/Thực thi).
+  3. Cùng Chu Mai Hồng điền cột `pass` (`1`/`0`) cho `eval/run-1.csv` và `eval/run-2.csv`, chạy `python run.py score eval/run-1.csv` và `python run.py score eval/run-2.csv`.
+  4. Chạy `python run.py simulate --rate-from eval/run-2.csv` để cập nhật cột **Chi phí / task thành công** vào `cost/cost-estimate.md` và `spec.md` §8.
+  5. Quay video demo dự phòng trên giao diện `python demo/demo_server.py` (`http://127.0.0.1:8765`). *(Lưu ý: do `*.mp4` được ignore khỏi Git, nếu máy Vũ chưa có file video mẫu thì chỉ cần chép 1 file `.mp4` bất kỳ vào `demo/assets/agent-video-internal-demo.mp4`)*.
+- **Chu Mai Hồng (BA / Evidence / Chấm Eval):**
+  1. Điền kết quả phỏng vấn 3 học viên ngoài nhóm (`P1`–`P3`) vào `evidence/interviews/P1.md`..`P3.md` và cập nhật bảng tổng hợp tại `evidence/summary.md`, `spec.md` §1–§2.
+  2. Phối hợp cùng Vũ/Hưng chấm chéo 5 câu đầu và chốt cột `pass` cho `eval/run-1.csv` & `eval/run-2.csv`.
+  3. Viết `reflection/chu-mai-hong.md` trước 23:59 Thứ Bảy 28/11.
+- **Phạm Việt Hưng (Đội trưởng / Báo cáo / Slide):**
+  1. Sau khi Vũ và Hồng chốt điểm `score` của `run-1.csv` & `run-2.csv`, điền con số chính thức vào `spec.md` §7, `eval/README.md` mục 5–6 và `eval/report.md` mục 1, 3, 4.
+  2. Hoàn thiện slide theo `slides/outline.md`, xuất **`demo-slides.pdf`** đặt ở thư mục gốc repo trước hạn CP4 (14:30 Thứ Bảy 28/11) và điền link video dự phòng vào `README.md` mục 7.
+  3. Viết `reflection/pham-viet-hung.md` trước 23:59 Thứ Bảy 28/11.

@@ -39,8 +39,8 @@ EXPECTED_SEGMENT = {
     "C16": "d01-bi-cat-giua-chung",
     "C17": "d01-context-keep-table-clean",
     "C18": "d02-rule-workflow-agent",
-    "C19": "MISSING_IN_LESSON_JSON:tu-tin-khong-phai-dung",
-    "C20": "MISSING_IN_LESSON_JSON:so-lan-chay-vong-lap",
+    "C19": "d01-tu-tin-khong-phai-dung",
+    "C20": "d01-so-lan-chay-vong-lap",
     "C21": "d02-cham-gate",
     "C22": None,  # Tấn công sửa item_completed=True
 }

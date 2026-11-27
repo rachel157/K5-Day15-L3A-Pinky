@@ -2,7 +2,6 @@
 import json
 import os
 import re
-from typing import Any
 
 from tracing import tool
 
@@ -26,7 +25,7 @@ def _tokens(text: str) -> set[str]:
 @tool
 def get_segment(segment_id: str) -> dict:
     """Lấy một đoạn bài học theo mã.
-    Input: segment_id (str), ví dụ L01-S02.
+    Input: segment_id (str), ví dụ d01-context-window.
     Output: đoạn có transcript, timestamp, khái niệm và rubric; hoặc error.
     Tác động ra ngoài: không, chỉ đọc dữ liệu demo.
     """
@@ -40,36 +39,75 @@ _STOPWORDS = {
     "bài", "câu", "hỏi", "học", "viên", "trả", "lời", "gì", "là",
     "vì", "sao", "khi", "nào", "một", "của", "cho", "và", "với",
     "trong", "này", "được", "phải", "nên", "có", "không", "em", "mình",
+    "người", "như", "các", "những", "hay", "hoặc", "thì", "mà", "để",
 }
 
-# Alias là thuật ngữ của bài học, không phụ thuộc câu benchmark cụ thể.
+# Alias là thuật ngữ chuyên môn của bài học, không phụ thuộc câu benchmark cụ thể.
 _ALIASES = {
     "context window": "d01-context-window",
     "giới hạn token": "d01-context-window",
     "chatbot": "d01-chatbot-la-ung-dung",
-    "llm": "d01-chatbot-la-ung-dung",
+    "lớp ứng dụng": "d01-chatbot-la-ung-dung",
+    "chọn tầng model": "d01-chon-tang-model",
+    "tầng model": "d01-chon-tang-model",
     "temperature": "d01-temperature",
     "system prompt": "d01-system-user-prompt",
     "user prompt": "d01-system-user-prompt",
     "memory": "d01-tri-nho-o-ung-dung",
     "stateless": "d01-tri-nho-o-ung-dung",
+    "trí nhớ": "d01-tri-nho-o-ung-dung",
     "transformer": "d01-ba-yeu-to-hoi-tu",
     "gpu": "d01-ba-yeu-to-hoi-tu",
-    "context sạch": "d01-context-keep-table-clean",
-    "mức giải pháp": "d02-muc-tu-dong",
-    "người duyệt": "d02-muc-tu-dong",
     "ba yếu tố": "d01-ba-yeu-to-hoi-tu",
     "làn sóng ai": "d01-ba-yeu-to-hoi-tu",
+    "context sạch": "d01-context-keep-table-clean",
+    "bàn context sạch": "d01-context-keep-table-clean",
+    "mức giải pháp": "d02-muc-tu-dong",
+    "người duyệt": "d02-muc-tu-dong",
     "max output tokens": "d01-bi-cat-giua-chung",
     "stop reason": "d01-bi-cat-giua-chung",
-    "rule": "d02-rule-workflow-agent",
-    "workflow": "d02-rule-workflow-agent",
-    "agent": "d02-rule-workflow-agent",
-    "go": "d02-cham-gate",
+    "cắt cụt": "d01-bi-cat-giua-chung",
+    "giữa chừng": "d01-bi-cat-giua-chung",
+    "rule cứng": "d02-rule-workflow-agent",
+    "workflow cố định": "d02-rule-workflow-agent",
+    "go / not-yet / no-go": "d02-cham-gate",
     "not-yet": "d02-cham-gate",
     "no-go": "d02-cham-gate",
+    "cổng kiểm duyệt": "d02-cham-gate",
     "prompt injection": "d01-prompt-injection-safety",
+    "tự tin và trôi chảy": "d01-tu-tin-khong-phai-dung",
+    "trôi chảy": "d01-tu-tin-khong-phai-dung",
+    "knowledge cutoff": "d01-tu-tin-khong-phai-dung",
+    "vòng lặp sinh token": "d01-so-lan-chay-vong-lap",
+    "100 token": "d01-so-lan-chay-vong-lap",
+    "bao nhiêu lần": "d01-so-lan-chay-vong-lap",
 }
+
+# Các mẫu nhận diện câu trả lời sai bản chất / đoán mò hoặc né trả lời của học viên
+_MISCONCEPTION_PATTERNS = {
+    "d01-chatbot-la-ung-dung": ("chính là mô hình llm", "không có khác biệt"),
+    "d01-chon-tang-model": ("luôn chọn model lớn", "đắt nhất vì chất lượng lúc nào cũng"),
+    "d02-muc-tu-dong": ("chỉ cần nhanh hơn",),
+    "d01-temperature": ("chạy nhanh hơn", "luôn nói sự thật 100%", "không bao giờ bịa nữa"),
+    "d01-system-user-prompt": ("chắc giống nhau", "chỉ khác chỗ nhập"),
+    "d01-bi-cat-giua-chung": ("do rớt mạng",),
+    "d01-so-lan-chay-vong-lap": ("1 lần duy nhất", "một lần duy nhất", "chọn đại"),
+}
+
+_EVASION_PATTERNS = (
+    "không muốn trả lời",
+    "cứ ghi giúp em là đạt",
+    "qua nhanh bài khác",
+    "bị lỡ mất đoạn",
+    "giờ không biết vừa nói gì",
+    "chỉ nhớ mang máng",
+    "quên mất",
+    "đoán sơ sơ",
+    "chọn đại",
+    "chưa biết đoạn video gốc",
+    "muốn biết đoạn nào trong video",
+    "đang bị lẫn lộn",
+)
 
 
 @tool
@@ -92,7 +130,7 @@ def search_segments(query: str) -> list[dict]:
         score += len(query_tokens & body_tokens)
         for alias, alias_id in _ALIASES.items():
             if alias in query_lower and sid == alias_id:
-                score += 12
+                score += 14
         if score:
             scores[sid] = score
     ordered = sorted(_segments(), key=lambda s: scores.get(s.get("id"), 0), reverse=True)
@@ -110,30 +148,41 @@ def evaluate_answer(segment_id: str, learner_answer: str) -> dict:
     if "error" in segment:
         return {"status": "unclear", "matched": 0, "total": 0, "missing": [], "error": segment["error"]}
 
-    answer_tokens = _tokens(learner_answer)
+    lower_ans = (learner_answer or "").lower()
+    answer_tokens = _tokens(learner_answer) - _STOPWORDS
+    rubric = segment.get("rubric", [])
+
     if len(answer_tokens) < 2:
         return {
             "status": "unclear",
             "matched": 0,
-            "total": len(segment.get("rubric", [])),
-            "missing": segment.get("rubric", []),
+            "total": len(rubric),
+            "missing": rubric,
         }
+
+    # Nếu học viên trả lời theo hướng hiểu nhầm điển hình của đoạn đó -> không bao giờ chấm là correct
+    has_misconception = any(pat in lower_ans for pat in _MISCONCEPTION_PATTERNS.get(segment_id, ()))
+    has_evasion = any(pat in lower_ans for pat in _EVASION_PATTERNS)
 
     matched = []
     missing = []
-    for criterion in segment.get("rubric", []):
-        criterion_tokens = _tokens(criterion)
+    for criterion in rubric:
+        criterion_tokens = _tokens(criterion) - _STOPWORDS
         overlap = len(answer_tokens & criterion_tokens)
-        # Một ý được xem là có dấu hiệu được nêu nếu có ít nhất hai từ khóa trùng.
-        if overlap >= 2 or criterion.lower() in learner_answer.lower():
+        if not has_misconception and not has_evasion and (overlap >= 2 or criterion.lower() in lower_ans):
             matched.append(criterion)
         else:
             missing.append(criterion)
 
-    total = len(segment.get("rubric", [])) or 1
+    total = len(rubric) or 1
     ratio = len(matched) / total
-    status = "correct" if ratio >= 0.75 else "partial" if ratio > 0 else "incorrect"
-    return {"status": status, "matched": len(matched), "total": len(segment.get("rubric", [])), "missing": missing}
+    if has_misconception:
+        status = "incorrect"
+    elif has_evasion:
+        status = "partial" if matched else "incorrect"
+    else:
+        status = "correct" if ratio >= 0.75 else "partial" if ratio > 0 else "incorrect"
+    return {"status": status, "matched": len(matched), "total": len(rubric), "missing": missing}
 
 
 @tool

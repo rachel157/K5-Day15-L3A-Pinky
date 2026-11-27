@@ -37,3 +37,6 @@ data-btc
 data-btc/
 data/preclass/
 data/training-ops/
+# File video MP4 demo nội bộ dung lượng lớn (không commit lên GitHub)
+*.mp4
+demo/assets/*.mp4

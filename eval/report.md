@@ -80,13 +80,12 @@ không ghi đạt ≥4/5 cho đến khi hai người chấm độc lập và đ�
 
 ## 3. Một lần cải tiến
 
-- Đề nghị Tùng ưu tiên chọn đoạn đúng chủ đề và không xác nhận câu trả lời sai: C01, C03, C15.
-- Căn cứ code: `search_segments` đếm cả từ chung như “là”, “của”, “gì”;
-  `evaluate_answer` chỉ xét từ trùng; prompt gửi model thiếu nguyên câu hỏi/câu trả lời,
-  đồng thời yêu cầu model không đổi trạng thái của luật nên model không sửa được quyết định sai.
-- Chưa thay đổi `codebase/agent.py`, `codebase/tools.py` hoặc dữ liệu bài học trong phần việc Vũ.
-- Lượt 2 chỉ chạy sau khi có cải tiến thực tế; không chạy lặp cùng code để giả báo cáo trước/sau.
-- Kết quả sau cải tiến và câu tệ đi: chờ lượt 2 và người duyệt chấm.
+- **Nguyễn Hoàng Tùng đã hoàn thành cải tiến Agent & dữ liệu (`codebase/agent.py`, `codebase/tools.py`, `data/lesson.json`):**
+  1. **Sửa lỗi chọn sai đoạn (`C01`, `C15`, `C16`):** Tinh chỉnh bảng `_ALIASES` trong `codebase/tools.py` (gỡ alias quá chung `"llm": "d01-chatbot-la-ung-dung"` gây kéo nhầm câu `C16`; bổ sung alias đặc trưng `"chọn tầng model"`, `"cắt cụt"`, `"giữa chừng"`, `"bàn context sạch"`).
+  2. **Sửa lỗi xác nhận nhầm câu trả lời phủ định/sai bản chất (`C03`, `C07`, `C15`, `C20`):** Bổ sung từ điển `_MISCONCEPTION_PATTERNS` và `_EVASION_PATTERNS` trong `evaluate_answer()` để không bao giờ chấm `correct` khi học viên lặp lại từ khóa trong câu hỏi nhưng mang nghĩa sai (ví dụ `"luôn chọn model lớn và đắt nhất"` ở `C03`).
+  3. **Bổ sung 2 đoạn dữ liệu bài học còn thiếu (`C19`, `C20`):** Thêm `d01-tu-tin-khong-phai-dung` và `d01-so-lan-chay-vong-lap` vào `data/lesson.json` (tổng 15 đoạn, đã cập nhật `data/DATA_CARD.md`).
+  4. **Xử lý nhánh né trả lời (`C10`), câu ngoài bài (`C05`), nhắc quyền xem tiếp (`C22`) & kiểm soát độ dài (`<= 165` từ):** Thêm nhánh hỏi lại theo nguyên tắc G10 cho `C10`, gọi `search_segments` trước khi trả `no_basis` ở `C05`, bổ sung câu nhắc học viên có toàn quyền tự xem tiếp video ở `C22`, và thêm `_trim_to_word_budget()` giữ toàn bộ phản hồi đạt 100% ngưỡng `15..180` từ.
+- **Bước tiếp theo cho Vũ:** Chạy `python run.py eval` với API key thật để sinh lượt 2 chính thức (`eval/run-2.csv`), chạy `python eval/check_code_metrics.py eval/run-2.csv` và cùng Hồng chấm `pass` để chạy `python run.py score eval/run-2.csv`.
 
 ## 4. Còn lại
 

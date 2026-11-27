@@ -40,6 +40,6 @@ Khung chỉ dùng thư viện chuẩn của Python. Thêm thư viện thì ghi v
 
 ## Quy ước của nhóm
 
-- Ngôn ngữ trả lời người dùng: __
-- Phong cách code / đặt tên: __
-- Ai duyệt thay đổi do agent tạo trước khi commit: __
+- Ngôn ngữ trả lời người dùng: Tiếng Việt tự nhiên, súc tích, thân thiện với học viên (`<= 180` từ tại điểm dừng video).
+- Phong cách code / đặt tên: Python 3.10+ chỉ dùng thư viện chuẩn (`urllib`, `http.server`, `json`, `re`, `csv`); tên hàm/biến `snake_case`, giữ nguyên hợp đồng `answer(text) -> {"output": str}`, `@tool`, `@model_call`.
+- Ai duyệt thay đổi do agent tạo trước khi commit: Nguyễn Hoàng Tùng (duyệt `codebase/agent.py`, `codebase/tools.py`, `data/lesson.json`, `demo/`), Phạm Nguyên Vũ (duyệt `codebase/ai.py`, `cost/`, `eval/check_code_metrics.py`), Chu Mai Hồng & Phạm Việt Hưng (duyệt `spec.md`, `canvas.md`, `evidence/`, `eval/`).
