@@ -46,6 +46,6 @@ Giả thuyết ở `evidence/hypothesis.md`: **đang kiểm chứng thêm bằng
 
 | Vai | Giờ hẹn | Đã xong? |
 |---|---|---|
-| Học viên L3A (ngoài nhóm) — P1 | *(điền giờ hẹn tối T6 / sáng T7)* | ☐ |
-| Học viên L3A (ngoài nhóm) — P2 | *(điền giờ hẹn tối T6 / sáng T7)* | ☐ |
-| Học viên L3A (ngoài nhóm) — P3 | *(điền giờ hẹn tối T6 / sáng T7)* | ☐ |
+| Học viên L3A (ngoài nhóm) — P1 | 18:30 Thứ Sáu 27/11 (trực tiếp tại lớp) | ☐ |
+| Học viên L3A (ngoài nhóm) — P2 | 18:30 Thứ Sáu 27/11 (trực tiếp tại lớp) | ☐ |
+| Học viên L3A (ngoài nhóm) — P3 | 18:30 Thứ Sáu 27/11 (trực tiếp tại lớp) | ☐ |
