@@ -6,14 +6,15 @@
 
 - Tên nhóm: Pinky
 - Lớp: L3A
-- Track: ____
+- Track: A
 - Link repo: https://github.com/rachel157/K5-Day15-L3A-Pinky
 
 | STT | Họ và tên | Mã học viên | Vai trò | Phần việc chính |
 |---|---|---|---|---|
-| 1 | ____ | ____ | Đội trưởng | ____ |
-| 2 | ____ | ____ | Thành viên | ____ |
-| 3 | ____ | ____ | Thành viên | ____ |
+| 1 | Phạm Việt Hưng | 2A202603370 | Đội trưởng | Dev, điều phối tích hợp và hoàn thiện Canvas |
+| 2 | Phạm Nguyên Vũ | 2A202603436 | Thành viên | DevOps, triển khai môi trường, CI/CD và quản lý cấu hình |
+| 3 | Chu Mai Hồng | 2A202603377 | Thành viên | BA, nghiên cứu người dùng, đặc tả pain và kiểm thử theo kịch bản |
+| 4 | Nguyễn Hoàng Tùng | 2A202603481 | Thành viên | Dev, xây dựng Agent, xử lý transcript và logic đề xuất xem lại |
 
 **Quy tắc điền**
 - **Lớp:** `L3A` hoặc `L3B`. **Track:** một chữ `A` (EdTech), `B` (Y tế), `C` (Du lịch), `D` (Thương mại điện tử), `E` (Tài chính) hoặc `F` (Làn khác). **Link repo:** link GitHub công khai của nhóm.
