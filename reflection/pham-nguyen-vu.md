@@ -1,0 +1,12 @@
+# Reflection — Phạm Nguyên Vũ
+
+> Làm ở guide bước 5.3. Hạn: **23:59 Thứ Bảy 28/11**. *(Bản cập nhật sau lượt 1 — Vũ rà lại số lượt 2 và mã commit cuối trước khi nộp).*
+
+1. **Vai trò + phần mình làm (trỏ tới file / commit):**
+   Mình phụ trách DevOps, cấu hình môi trường, nối model thật và vận hành đánh giá/mô phỏng chi phí cho nhóm Pinky. Cụ thể, mình viết adapter kết nối OpenAI/Gemini/Anthropic bằng thư viện chuẩn trong `codebase/ai.py` (giữ nguyên hợp đồng `@model_call`, lấy đúng `tokens_in`/`tokens_out` từ `usage`, bật `store: False`), cấu hình bảo mật `.gitignore`/`.env.example` và tài liệu vận hành tại `docs/connect-model.md`, `README.md`. Sau khi ghép nhánh `1a7d324`, mình xây dựng kịch bản người dùng kèm nguồn giá tại `cost/personas.yaml`, chạy bộ 22 câu thử lượt 1 (`eval/run-1.csv`) và mô phỏng 50 phiên (`cost/simulate-1.csv`), viết `eval/check_code_metrics.py` kiểm tự động 2 metric `code`, cũng như tổng hợp phân tích tại `cost/cost-estimate.md`, `eval/report.md` và `spec.md` §8–§10.
+
+2. **AI hỗ trợ mình thế nào (việc gì, công cụ gì, chỗ nào phải sửa lại output AI):**
+   Mình dùng Codex và Antigravity để hỗ trợ viết nhanh nhánh gọi HTTP API chuẩn trong `codebase/ai.py`, tự động hóa script kiểm metric `code` (`eval/check_code_metrics.py`) và nháp bảng đối chiếu 22 câu từ `eval/run-1.csv`. Khi kiểm lại output của AI, mình phải siết chặt hai điểm quan trọng: (1) tuyệt đối không cộng trùng `reasoning_tokens` vào `completion_tokens` của OpenAI và bắt buộc báo lỗi nếu thiếu trường `usage` thay vì ước lượng token; (2) không cho phép AI tự điền sẵn cột `pass` hay giả định tỷ lệ đạt 100% khi tính chi phí mỗi task thành công trong `cost/cost-estimate.md` khi chưa có biên bản duyệt của người chấm.
+
+3. **Một câu thử trượt của nhóm và mình học được gì từ nó:**
+   Ở lượt 1 (`eval/run-1.csv`), câu `C03` (học viên trả lời sai bản chất: *"Luôn chọn model lớn và đắt nhất vì chất lượng lúc nào cũng tốt hơn"*) lại bị hệ thống xác nhận là *"đã nêu đủ các ý chính"* và mời xem tiếp. Nguyên nhân là hàm `evaluate_answer` trong `codebase/tools.py` chỉ đếm số từ khóa trùng (`model`, `lớn`, `chất lượng`) mà bỏ qua sắc thái phủ định, đồng thời prompt gửi sang LLM lại cấm đổi trạng thái của luật nên LLM không cứu được quyết định sai. Từ lỗi này, mình học được rằng hạ tầng gọi API chạy `0` lỗi kỹ thuật và chi phí rẻ (`$0.0046`/người/tháng) chưa đủ để kết luận sản phẩm đáng triển khai nếu tầng logic đánh giá còn tạo "ảo giác hiểu bài" ngược cho người học.

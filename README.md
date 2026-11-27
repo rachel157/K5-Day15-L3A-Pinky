@@ -1,7 +1,7 @@
 > Đây là khung repo nộp bài. Điền mọi chỗ `____`, giữ nguyên tên các mục. **Mục 0 xoá đi sau khi tạo repo xong.**
 > Giờ, mốc, luật, rubric: xem `README.md`, `02-guide.md`, `03-rubric.md` trong repo đề (bộ đề BTC phát).
 
-# Pinky — [Tên lát cắt]
+# Pinky — Checkpoint Tutor
 
 **Thành viên, lớp, track:** xem [TEAMS.md](TEAMS.md). **Điền TEAMS.md đúng format**: khi chấm và đánh giá, BTC quét file này để ghép điểm cho từng người.
 
@@ -84,14 +84,15 @@ Nhóm dùng stack khác (Node, Streamlit, notebook…): sửa hàm `run_app()` t
 
 | Thành phần | Thật / Giả | Ghi chú |
 |---|---|---|
-| Lời gọi AI ở quyết định trung tâm | **Thật** (bắt buộc từ CP3) | Model: ____ |
-|  |  |  |
+| Lời gọi AI ở quyết định trung tâm | **Thật** (bắt buộc từ CP3) | Model: `gpt-5.4-mini` (`gpt-5.4-mini-2026-03-17` qua OpenAI API, đo đúng `tokens_in`/`tokens_out` từ `usage`; tự lùi về `fake` khi chưa có `.env`) |
+| Công cụ tra cứu bài giảng (`codebase/tools.py` + `data/lesson.json`) | **Giả lập có kiểm soát (`synthetic`)** | Đọc 13 đoạn tóm tắt mẫu Day01 & Day02 biên tập theo danh mục `kc_code` thật, chưa kết nối trực tiếp DB `preclass-online.com` |
+| Nhật ký hành vi học tập (`data/preclass`) | **Thật** | Log ẩn danh BTC cấp (dùng đếm bằng chứng qua `evidence/count.py`, không commit file dữ liệu gốc) |
 
 ## Dùng AI vào việc gì
 
 2–3 dòng (bắt buộc): nhóm dùng công cụ AI nào để làm gì, người kiểm lại phần nào. Chi tiết: [docs/ai-usage.md](docs/ai-usage.md). Coding agent đọc [AGENTS.md](AGENTS.md).
 
-____
+Nhóm sử dụng coding agent (Codex, Antigravity) để hỗ trợ viết adapter gọi model chuẩn (`codebase/ai.py`), chạy kiểm tra bộ câu thử/mô phỏng chi phí, viết script kiểm tự động 2 metric `code` (`eval/check_code_metrics.py`) và tổng hợp bản nháp báo cáo kỹ thuật. Mọi số liệu bằng chứng đào từ log thật, tiêu chí chấm, cột `pass` và quyết định thiết kế đều do thành viên nhóm trực tiếp đối chiếu, kiểm chứng và duyệt lại.
 
 ## File mẫu — điền ở bước nào
 
@@ -112,6 +113,36 @@ ____
 | `slides/outline.md` → `demo-slides.pdf` | 5.1 | CP4 |
 | `reflection/TEMPLATE.md` → `reflection/<ten>.md` | 5.3 | 23:59 Thứ Bảy 28/11 |
 | `AGENTS.md` · `docs/ai-usage.md` | khi dùng coding agent / AI | suốt |
+
+## Cấu hình và vận hành — phần Vũ
+
+Kết nối Gemini/OpenAI/Anthropic đã có trong `codebase/ai.py`, không cần cài thêm SDK.
+Tạo `.env` từ `.env.example` nếu chưa có, rồi điền trên máy:
+
+```dotenv
+MODEL_PROVIDER=openai
+MODEL_NAME=gpt-5.4-mini
+API_KEY=KEY_CUA_NHOM
+```
+
+Không commit `.env`. Chạy `python run.py`, nhập một câu và kiểm tra token vào/ra >0.
+Ngày 27/11/2026 đã thử input `Reply briefly with OK.`, nhận `OK` từ
+`gpt-5.4-mini-2026-03-17`, 45 token vào / 4 token ra, 1 model call và 1 tool call.
+Đây là kiểm tra kết nối ban đầu. Sau khi pull origin/main `1a7d324`, đã chạy
+`python run.py check` hợp lệ và eval đủ 22 câu bằng AI thật, 0 lỗi runtime;
+kết quả ở [eval/run-1.csv](eval/run-1.csv), lỗi nội dung ở [eval/report.md](eval/report.md).
+Dữ liệu bài giảng vẫn là bản tóm tắt synthetic, chưa kết nối LMS thật.
+Hướng dẫn chi tiết: [Nối model](docs/connect-model.md).
+
+Trình tự vận hành: `python run.py eval --try` → `python run.py eval` →
+người duyệt chấm `pass` → `python run.py score eval/run-1.csv`.
+Đã chạy thử 10 phiên và đo 50 phiên: [báo cáo chi phí](cost/cost-estimate.md).
+Khi có lượt 2 đã chấm, chạy `python run.py simulate --rate-from eval/run-2.csv`.
+
+Demo bằng `python run.py`: dùng input C02 (gợi ý xem lại), C06 (hỏi làm rõ),
+C11 (từ chối chấm điểm/mở khóa) từ benchmark; nêu rõ hạn chế ở báo cáo.
+Trước khi quay video dự phòng, đóng cửa sổ `.env`, kiểm tra mạng/API, chạy ba tình huống,
+xem lại hình/tiếng và lưu một bản dự phòng. Video chưa được quay trong lần kiểm tra này.
 
 ## Bảy hạng mục bắt buộc — nằm ở file nào
 

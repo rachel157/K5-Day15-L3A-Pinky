@@ -45,11 +45,13 @@
 
 | Lượt | Run ID | Model | Cấu hình (prompt / công cụ / thay đổi) | Đạt / tổng | % | Đạt chuẩn? |
 |---|---|---|---|---|---|---|
-| 1 | | | | __/__ | | |
-| 2 | | | | __/__ | | |
+| 1 | run-1@20261127-190536 | gpt-5.4-mini-2026-03-17 | origin/main `1a7d324` + adapter API local của Vũ; 22 câu, 17 model call, 51 tool call; 0 lỗi kỹ thuật | Chờ người duyệt chấm 22 câu | — | Chưa kết luận |
+| 2 | Chưa chạy | — | Chờ Tùng cải tiến từ lỗi lượt 1 | — | — | — |
 
 Lượt chạy lại vì lỗi kỹ thuật, lượt sau CP4: ghi thêm dòng, không sửa dòng cũ.
 
 ## 6. Lỗi chính
 
-Tóm 2–3 dòng từ `eval/report.md`: nhóm lỗi lớn nhất · đã sửa gì · còn lại gì.
+Lượt 1 có lỗi chọn sai đoạn (C01, C15), đánh giá sai câu phủ định (C03),
+và thiếu nguồn để trả lời C19/C20. Chưa thay đổi Agent; xem `eval/report.md`.
+`python run.py score eval/run-1.csv` xác nhận 0/22 câu đã chấm; chưa có tỷ lệ đạt chính thức.

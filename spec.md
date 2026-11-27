@@ -125,26 +125,35 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): `data/prec
 - Kết quả: lượt 1 __/__ (__%) · lượt 2 __/__ (__%) — run ID: __ / __ → chi tiết `eval/report.md`, hồ sơ `eval/README.md`
 
 ## §8. Chi phí khi dùng thật *(guide 4.2)*
-- Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-__.csv` (__ phiên)
-- Chi phí / task thành công: __ (model __) · __ (model __)
-- Chi phí / tháng ở quy mô thật: thấp __ · cơ sở __ · cao __ → chi tiết `cost/cost-estimate.md`
-- So với impact / người / tháng (§2): đáng làm không, vì sao:
+- Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-1.csv` (50 phiên, seed 42, 0 lỗi kỹ thuật). Hành vi/tỷ trọng persona là tự ước tính theo §2.
+- Chi phí / task thành công: chưa tính cho mọi model vì chưa có lượt eval được người duyệt chấm xong; không giả định đạt 100%.
+- Đo token trên `gpt-5.4-mini-2026-03-17`; chi phí / tháng thấp (177 người) **$0.8227** · cơ sở (213 người) **$0.9901** · cao (431 người) **$2.00**. Quy mô từ `evidence/data-mining.md`; dùng ba nhóm làm kịch bản triển khai là tự ước tính. So sánh giả định giá Gemini trong `cost/cost-estimate.md`.
+- So với impact / người / tháng (§2): 24 phút (tự ước tính) so với $0.0046/người/tháng ở kịch bản cơ sở. Chi phí model thấp nhưng chưa kết luận đáng triển khai khi còn lỗi chọn đoạn/đánh giá sai và chưa có tỷ lệ đạt đã duyệt.
 
 ## §9. Rủi ro & an toàn
 - Dữ liệu: đã ẩn danh gì, không thu gì, không đưa gì vào model gói miễn phí:
+  - Dữ liệu hành vi học tập (`data/preclass`) chỉ dùng mã ẩn danh (`Lxxxx`, `Axxxxx`, `Cxxxxx`) để đếm tổng hợp offline bằng `evidence/count.py`, bị chặn khỏi Git qua `.gitignore` và **tuyệt đối không gửi lên API LLM**.
+  - Bản chạy thử không thu thập tên thật, email, SĐT học viên; không commit `.env`/API key; lời gọi OpenAI API trong `codebase/ai.py` đặt `"store": False` (trả phí theo token, không dùng gói miễn phí lưu prompt huấn luyện).
 - AI **không được** làm gì kể cả khi người dùng yêu cầu:
+  - Không tự chấm điểm số chính thức (vd `10/10`, Đạt/Trượt), không khóa video hay ép xem lại, không sửa tiến độ hệ thống (`item_completed`), không viết lời giải hoàn chỉnh nộp hộ Mini Lab, và không bịa mã đoạn bài giảng hay lịch học/phòng thi ngoài dữ liệu bài học.
 - Ai có thể bị hại nếu AI sai, và nhóm chặn thế nào:
+  - Học viên có thể bị củng cố hiểu nhầm (nếu AI xác nhận câu trả lời sai là đúng như lỗi `C03` ở lượt 1) hoặc tốn vài chục giây tua nhầm đoạn (như `C01`, `C15`). Nhóm chặn bằng: (1) kiến trúc công cụ `read-only` không có quyền ghi điểm/khóa bài; (2) học viên luôn giữ quyền bấm xem tiếp; (3) đo kiểm tự động chống bịa mã đoạn (`0%` mã ngoài `data/lesson.json`) và đối chiếu rubric trước khi triển khai.
 
 ## §10. Phân công & changelog
-- Phân công có tên (theo chặng, chia cặp — guide "Cách chia việc"): __
+- Phân công có tên (theo chặng, chia cặp — guide "Cách chia việc", chi tiết `docs/task-division.md`):
+  - **Cặp X (Kỹ thuật & Vận hành):** **Nguyễn Hoàng Tùng** (`codebase/agent.py`, `codebase/tools.py`, `data/lesson.json`, cải tiến sau lượt 1) + **Phạm Nguyên Vũ** (môi trường `.env`/`.gitignore`, nối API trong `codebase/ai.py`, vận hành `eval`/`simulate`, `eval/check_code_metrics.py`, `cost/`, máy demo & video dự phòng).
+  - **Cặp Y (Sản phẩm, Bằng chứng & Đánh giá):** **Chu Mai Hồng** (phỏng vấn & đào data `evidence/`, kịch bản khó §5, `eval/benchmark.csv`, `eval/metric_spec.yaml`, chấm chéo) + **Phạm Việt Hưng** (điều phối, `canvas.md`, `spec.md` §0–§7, `data/DATA_CARD.md`, `eval/README.md`, slide & nộp bài).
 - Dùng AI vào việc gì (2–3 dòng; chi tiết `docs/ai-usage.md`):
+  - Dùng coding agent (Codex, Antigravity) hỗ trợ viết adapter gọi model chuẩn (`codebase/ai.py`), script đếm dữ liệu/kiểm metric `code` (`evidence/count.py`, `eval/check_code_metrics.py`), chạy `eval`/`simulate` và tổng hợp nháp báo cáo kỹ thuật. Thành viên nhóm trực tiếp kiểm chứng số liệu gốc, duyệt câu thử/metric, chấm cột `pass` và kiểm soát mọi thay đổi trước khi commit.
 - Nhật ký thay đổi — **mọi thay đổi sau CP2 19:30 Thứ Sáu 27/11 phải có dòng ở đây**:
 
 **CP2 → CP4** (vd thu hẹp lát cắt, hỏi thêm người dùng, lần cải tiến trước lượt 2)
 
 | Thời điểm | Đổi gì | Vì sao (trỏ về câu thử / lỗi / bằng chứng nào) |
 |---|---|---|
-|  |  |  |
+| 27/11/2026 — phần kỹ thuật của Vũ | Thêm adapter model và hướng dẫn trong README; chuẩn bị persona với giả định rõ và giá có nguồn | Đã gọi AI thật qua app: 45 token vào / 4 token ra. Benchmark/metric còn mẫu; chưa chạy eval chính thức hoặc thay đổi chuẩn đạt. |
+| 27/11/2026 — sau pull `1a7d324` | Vũ chạy eval 22 câu và mô phỏng 50 phiên với OpenAI thật; chuẩn bị chấm chéo nháp trong eval/report.md; cập nhật §8 từ summary tự sinh | `eval/run-1.csv` và `cost/simulate-1.csv` đều 0 lỗi runtime. Có lỗi nội dung; chờ Tùng cải tiến và Vũ/Hồng duyệt chấm. Không thay chuẩn đạt hoặc metric. |
+| 27/11/2026 — rà soát hoàn thiện phần Vũ | Bổ sung `eval/check_code_metrics.py`, bảng nháp rà đủ 22 câu lượt 1 trong `eval/report.md`, điền `README.md`, `spec.md` §9–§10 và nháp `reflection/pham-nguyen-vu.md` | Đo tự động 2 metric `code` trên `eval/run-1.csv` (`0%` bịa mã ngoài `lesson.json`, `68.8%` đúng mã mục tiêu, `100%` đạt độ gọn/thực thi); chuẩn bị sẵn hồ sơ cho Vũ/Hồng duyệt chấm và Tùng sửa lỗi lượt 2. |
 
 **Sau CP4 (đến 23:59 Thứ Bảy 28/11)** (sửa theo góp ý — không sửa chuẩn "đạt", câu thử, số bằng chứng, kết quả các lượt đã chạy)
 

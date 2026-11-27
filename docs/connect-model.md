@@ -2,6 +2,11 @@
 
 > Làm ở guide bước 3.3. **Nên xong tối Thứ Sáu 27/11 trước khi ngủ** (sáng Thứ Bảy 28/11 không có lớp). Kẹt quá 20 phút thì hỏi ngay.
 
+**Trạng thái repo 27/11/2026:** Vũ đã bổ sung adapter Gemini/OpenAI/Anthropic trong
+`codebase/ai.py` bằng thư viện chuẩn và kiểm tra OpenAI thật thành công.
+Chỉ cần cấu hình `.env` theo README rồi chạy `python run.py`; không cần chép đè
+các ví dụ dưới đây lên adapter hiện tại. Các provider khác như Ollama chưa được tích hợp.
+
 Mục tiêu: `call_model()` trong `codebase/ai.py` gọi model thật và trả về câu trả lời kèm **số token** đo được. Prompt và luồng là phần nhóm tự viết trong `codebase/agent.py`. File này chỉ lo phần kết nối.
 
 Ba ví dụ dưới đây (OpenAI, Claude, Ollama) **đã chạy với key thật ngày 25/11/2026**: chép vào là chạy.
