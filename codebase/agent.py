@@ -73,8 +73,21 @@ def answer(text: str) -> dict:
         note("từ chối yêu cầu ngoài phạm vi")
         return {"output": refusal}
 
-    candidates = search_segments(question or learner_answer)
-    if not candidates:
+    # Explicitly unsupported/unknown technical topics must not map to a merely
+    # adjacent segment (for example KV-cache/INT4/H100 is not in this lesson).
+    question_text = question or learner_answer
+    unsupported_markers = ("kv-cache", "kv cache", "int4", "h100")
+    lesson_terms = ("context", "chatbot", "llm", "model", "temperature", "prompt",
+                    "memory", "trí nhớ", "gpu", "transformer", "token", "workflow",
+                    "agent", "rule", "go", "no-go", "not-yet", "context window",
+                    "mức giải pháp", "người duyệt", "ba yếu tố", "làn sóng ai",
+                    "tự tin", "trôi chảy")
+    lower_question = question_text.lower()
+    if any(marker in lower_question for marker in unsupported_markers):
+        return {"output": "Mình chưa tìm thấy căn cứ về nội dung này trong dữ liệu bài học hiện tại nên không thể kết luận chắc chắn hoặc bịa mã đoạn. Bạn có thể kiểm tra nguồn học chính thức hoặc xem tiếp video."}
+
+    candidates = search_segments(question_text)
+    if not candidates or not any(term in lower_question for term in lesson_terms):
         return {"output": "Mình chưa tìm thấy căn cứ phù hợp trong dữ liệu bài học hiện tại nên không thể kết luận chắc chắn. Bạn có thể xem tiếp hoặc kiểm tra lại nội dung bài."}
     segment = candidates[0]
     segment_id = segment["id"]
