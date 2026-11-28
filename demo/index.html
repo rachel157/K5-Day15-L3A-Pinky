@@ -1940,8 +1940,8 @@ function openCheckpointModal(cpId) {
   feedbackJumpBtn.textContent = `↺ Xem lại: ${cp.title} (${fmtTime(cp.start_time)}–${fmtTime(cp.end_time)})`;
 
   const remaining = checkpointQueue.filter(id => id !== cp.id).length;
-  skipCurrentBtn.textContent = remaining > 0 ? `Bỏ qua câu này (còn ${remaining}) →` : "Bỏ qua, xem tiếp ▶";
-  feedbackNextBtn.textContent = remaining > 0 ? `Câu tiếp theo trong hàng đợi (${remaining}) →` : "Bỏ qua / Xem tiếp video ▶";
+  skipCurrentBtn.textContent = remaining > 0 ? `Bỏ qua câu này (còn ${remaining}) →` : "Bỏ qua & Xem tiếp video ▶";
+  feedbackNextBtn.textContent = "Xem tiếp video ▶";
 
   if (cp.type === "mcq") {
     submitEssayBtn.style.display = "none";
@@ -2069,6 +2069,24 @@ async function handleEssaySubmit() {
   }
 }
 
+function resumeVideoPlayback() {
+  checkpointQueue.forEach(id => {
+    const cp = getCp(id);
+    if (cp && cp.state === "queued") cp.state = "skipped";
+  });
+  checkpointQueue = [];
+  activeCpId = null;
+  overlay.classList.remove("active");
+  suppressTriggerUntil = Date.now() + 900;
+  if (video.ended || video.currentTime >= videoDuration - 1) {
+    try {
+      video.currentTime = 0;
+    } catch (_) {}
+  }
+  video.play().catch(() => {});
+  renderUI();
+}
+
 function advanceQueueOrResume() {
   if (activeCpId) {
     const idx = checkpointQueue.indexOf(activeCpId);
@@ -2076,12 +2094,10 @@ function advanceQueueOrResume() {
   }
   if (checkpointQueue.length > 0) {
     openCheckpointModal(checkpointQueue[0]);
+    renderUI();
   } else {
-    activeCpId = null;
-    overlay.classList.remove("active");
-    video.play().catch(() => {});
+    resumeVideoPlayback();
   }
-  renderUI();
 }
 
 // Render Collapsible Checkpoint List below video
@@ -2300,7 +2316,7 @@ feedbackJumpBtn.onclick = () => {
   video.play().catch(() => {});
   renderUI();
 };
-feedbackNextBtn.onclick = () => advanceQueueOrResume();
+feedbackNextBtn.onclick = () => resumeVideoPlayback();
 
 skipCurrentBtn.onclick = () => {
   const cp = getCp(activeCpId);
@@ -2310,17 +2326,7 @@ skipCurrentBtn.onclick = () => {
   advanceQueueOrResume();
 };
 
-skipAllBtn.onclick = () => {
-  checkpointQueue.forEach(id => {
-    const cp = getCp(id);
-    if (cp && cp.state === "queued") cp.state = "skipped";
-  });
-  checkpointQueue = [];
-  activeCpId = null;
-  overlay.classList.remove("active");
-  video.play().catch(() => {});
-  renderUI();
-};
+skipAllBtn.onclick = () => resumeVideoPlayback();
 
 stageQueuePill.onclick = () => {
   if (checkpointQueue.length > 0) {
