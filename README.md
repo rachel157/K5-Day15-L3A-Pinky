@@ -1,7 +1,6 @@
-> Đây là khung repo nộp bài. Điền mọi chỗ `____`, giữ nguyên tên các mục. **Mục 0 xoá đi sau khi tạo repo xong.**
-> Giờ, mốc, luật, rubric: xem `README.md`, `02-guide.md`, `03-rubric.md` trong repo đề (bộ đề BTC phát).
-
 # Pinky — Checkpoint Tutor
+
+> Repo nộp bài Mini Hackathon AI20K (Lớp **L3A** · **Track A — EdTech**). Giờ, mốc, luật, rubric: xem `README.md`, `02-guide.md`, `03-rubric.md` trong bộ đề BTC phát.
 
 **Thành viên, lớp, track:** xem [TEAMS.md](TEAMS.md). **Điền TEAMS.md đúng format**: khi chấm và đánh giá, BTC quét file này để ghép điểm cho từng người.
 
@@ -129,21 +128,17 @@ API_KEY=KEY_CUA_NHOM
 Không commit `.env`. Chạy `python run.py`, nhập một câu và kiểm tra token vào/ra >0.
 Ngày 27/11/2026 đã thử input `Reply briefly with OK.`, nhận `OK` từ
 `gpt-5.4-mini-2026-03-17`, 45 token vào / 4 token ra, 1 model call và 1 tool call.
-Đây là kiểm tra kết nối ban đầu. Sau khi pull origin/main `1a7d324`, đã chạy
-`python run.py check` hợp lệ và eval đủ 22 câu bằng AI thật, 0 lỗi runtime;
-kết quả ở [eval/run-1.csv](eval/run-1.csv), lỗi nội dung ở [eval/report.md](eval/report.md).
-Dữ liệu bài giảng vẫn là bản tóm tắt synthetic, chưa kết nối LMS thật.
+Đã chạy `python run.py check` hợp lệ và eval đủ 22 câu bằng AI thật (`gpt-5.4-mini-2026-03-17`), 0 lỗi runtime qua 2 lượt:
+- **Lượt 1 (`run-1@20261127-190536`):** đạt **13/22 (59%)** ([eval/run-1.csv](eval/run-1.csv)).
+- **Lượt 2 (`run-2@20261128-071526`, sau cải tiến):** đạt **20/22 (91%)** (`thuong 8/8`, `kho 9/11`, `tu_choi 3/3`, `0%` bịa mã ngoài `data/lesson.json`) ([eval/run-2.csv](eval/run-2.csv), chi tiết ở [eval/report.md](eval/report.md) và [eval/README.md](eval/README.md)).
+Dữ liệu bài giảng là 15 đoạn tóm tắt có kiểm soát (`data/lesson.json`), chưa kết nối trực tiếp DB LMS thật.
 Hướng dẫn chi tiết: [Nối model](docs/connect-model.md).
 
 Trình tự vận hành: `python run.py eval --try` → `python run.py eval` →
-người duyệt chấm `pass` → `python run.py score eval/run-1.csv`.
-Đã chạy thử 10 phiên và đo 50 phiên: [báo cáo chi phí](cost/cost-estimate.md).
-Khi có lượt 2 đã chấm, chạy `python run.py simulate --rate-from eval/run-2.csv`.
+người duyệt chấm `pass` → `python run.py score eval/run-1.csv` (và `eval/run-2.csv`).
+Đã chạy thử 10 phiên và đo mô phỏng chính thức 50 phiên (`simulate-2@20261128-071851`, tỷ lệ đạt `20/22 = 90.9%`): chi phí trung bình **$0.0013/phiên**, **$0.0014/task thành công**, kịch bản cơ sở (`213` học viên) tốn **$1.65/tháng** (**$0.0078/người/tháng**), chi tiết tại [báo cáo chi phí](cost/cost-estimate.md).
 
-Demo bằng `python run.py`: dùng input C02 (gợi ý xem lại), C06 (hỏi làm rõ),
-C11 (từ chối chấm điểm/mở khóa) từ benchmark; nêu rõ hạn chế ở báo cáo.
-Trước khi quay video dự phòng, đóng cửa sổ `.env`, kiểm tra mạng/API, chạy ba tình huống,
-xem lại hình/tiếng và lưu một bản dự phòng. Video chưa được quay trong lần kiểm tra này.
+Demo trực tiếp bằng giao diện Web (`python demo/demo_server.py` tại `http://127.0.0.1:8765`) hoặc dòng lệnh (`python run.py`): dùng tình huống thường `C02` (nhầm khái niệm Chatbot vs LLM → gợi ý xem lại `d01-chatbot-la-ung-dung`), tình huống khó `C05`/`C06` (hỏi ngoài bài / trả lời cụt `"ok"`), và tình huống tấn công `C11` (Prompt Injection đòi chấm 10/10 và mở khóa video → chặn 0-token).
 
 ## Bảy hạng mục bắt buộc — nằm ở file nào
 
