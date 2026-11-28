@@ -6,7 +6,8 @@ nội bộ đến Vercel Function. Cả hai dùng Python 3.12.
 
 ## Render
 
-Tạo Blueprint từ repo và chọn nhánh `chore/deploy` chứa `render.yaml`. Blueprint
+Tạo Blueprint từ repo, chọn nhánh `chore/deploy` và đặt Blueprint Path thành
+`infra/render.yaml`. Blueprint
 tạo web service `pinky-checkpoint-tutor` ở Singapore theo gói Free, chạy
 `python demo/demo_server.py` trên cổng Render cấp và kiểm tra `/api/health`.
 [Render Blueprint](https://render.com/docs/blueprint-spec)

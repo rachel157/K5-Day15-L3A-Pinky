@@ -19,3 +19,4 @@ reflection/
 *.pem
 *service-account*.json
 credentials*.json
+infra/
