@@ -24,7 +24,7 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): `data/prec
   - Tua & mở lại video: **`2.602/4.322 (60.2%)`** lượt tua video là tua lùi (`to < from`) từ **`177/431 (41.1%)`** học viên; **`213/431 (49.4%)`** học viên phải mở lại cùng một video ≥ 2 lần (`1.055/7.254 = 14.5%` lượt mở).
   - Sai lần đầu sau khi xem: Tỉ lệ đóng bỏ qua câu hỏi giữa video (`skipped_stop = True`) chỉ **`21/2.099 (1.0%)`** lượt (`17/189 = 9.0%` học viên mở quiz), nhưng khi làm bài kiểm tra sau học (`pre_post_post`) có tới **`399/1.968 (20.3%)`** lượt trả lời sai ngay lần đầu (`lan_thu = 1`), tương ứng **`69/77 (89.6%)`** học viên làm phần này từng sai ít nhất 1 câu (ở `thuc_hanh` là `23/503 = 4.6%` lượt, `12/113 = 10.6%` học viên).
   - Hỏi đáp dưới video: **`1.108/1.260 (87.9%)`** lượt chat (`chat.csv`) là hỏi trực tiếp dưới video/slide (`video_question`) từ `145/431 (33.6%)` học viên.
-  - Kết luận: Dữ liệu thực tế khẳng định học viên gặp "ảo giác hiểu bài" và tốn nhiều thao tác tua lùi/mở lại video; nhóm đang tiến hành phỏng vấn ≥ 3 học viên L3A ngoài nhóm (`P1`–`P3`, hẹn 18:30 Thứ Sáu 27/11) để làm rõ nguyên nhân định tính trước CP3.
+  - Kết luận: Log cho thấy học viên tua lùi, mở lại video và có câu trả lời sai lần đầu ở bài kiểm tra sau học. Lý do tua lùi và thời điểm học viên nhận ra mình hiểu nhầm cần đối chiếu với phỏng vấn. Hồ sơ hiện chưa có ghi chép `P1`–`P3`.
 
 ## §2. Impact & quyết định chọn *(guide 1.3)*
 
@@ -34,7 +34,7 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): `data/prec
 | **H2. Trợ lý chấm & sửa lỗi code trực tiếp trong Mini Lab** | `12/113 (10.6%)` học viên sai lần đầu ở `thuc_hanh` (`answers.csv`) | ~`2` lần/tháng/người *(tự ước tính)* | ~`10` phút debug *(tự ước tính)* | ~`240` phút/tháng *(tự ước tính)* | Khó kiểm soát ranh giới làm hộ bài lab | Không |
 | **H3. Chatbot giải đáp lịch học & thủ tục hành chính lớp L3** | Nhóm nhỏ hỏi ngoài bài (`52/1.260 = 4.1%` chat ngoài `video_question`) | ~`1` lần/tháng/người *(tự ước tính)* | ~`2` phút tra LMS/Discord *(tự ước tính)* | ~`100` phút/tháng *(tự ước tính)* | Kịp nhưng tác động học tập thấp | Không |
 
-- **Impact / tháng** của hướng chọn = `177` người × `6` lần × `4` phút = **`4.248` phút/tháng (~`70.8` giờ/tháng)** — nguồn từng thừa số: `177` học viên tua lùi và `2.602` lượt tua lùi lấy từ `data/preclass/events.csv` (`evidence/data-mining.md`); tần suất quy đổi tháng (`6` lần) và thời gian mất mỗi lần mò lại đoạn (`4` phút) là *(tự ước tính — sẽ cập nhật số đo thực tế từ phỏng vấn `P1`–`P3` ở CP3)*.
+- **Impact / tháng** của hướng chọn = `177` người × `6` lần × `4` phút = **`4.248` phút/tháng (~`70.8` giờ/tháng)** — nguồn từng thừa số: `177` học viên tua lùi và `2.602` lượt tua lùi lấy từ `data/preclass/events.csv` (`evidence/data-mining.md`); tần suất quy đổi tháng (`6` lần) và thời gian mất mỗi lần mò lại đoạn (`4` phút) là *(tự ước tính)*. Cần số lần và số phút do học viên kể để kiểm lại hai giả định.
 - Hướng ĐÃ LOẠI + vì sao (giữ lại, đừng xoá): Loại **H2 (Sửa lỗi Mini Lab)** vì tỉ lệ sai lần đầu ở `thuc_hanh` chỉ `4.6%` lượt (`10.6%` học viên) so với `20.3%` lượt (`89.6%` học viên) ở `pre_post_post`, đồng thời rủi ro AI làm lộ đáp án lab rất cao; loại **H3 (Chatbot hành chính)** vì không giải quyết lỗ hổng hiểu bài pre-class.
 - Số lần / tháng của từng kiểu người dùng (dùng cho persona ở §8): Học viên xem nhanh/bận rộn: ~`8–10` lần/tháng *(tự ước tính)*; học viên học đều: ~`4–6` lần/tháng *(tự ước tính)*; học viên học kỹ/tra cứu ngược: ~`1–2` lần/tháng *(tự ước tính)*.
 
@@ -128,10 +128,10 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): `data/prec
 - Kết quả: lượt 1 __/__ (__%) · lượt 2 __/__ (__%) — run ID: __ / __ → chi tiết `eval/report.md`, hồ sơ `eval/README.md`
 
 ## §8. Chi phí khi dùng thật *(guide 4.2)*
-- Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-1.csv` (50 phiên, seed 42, 0 lỗi kỹ thuật). Hành vi/tỷ trọng persona là tự ước tính theo §2.
-- Chi phí / task thành công: chưa tính cho mọi model vì chưa có lượt eval được người duyệt chấm xong; không giả định đạt 100%.
-- Đo token trên `gpt-5.4-mini-2026-03-17`; chi phí / tháng thấp (177 người) **$0.8227** · cơ sở (213 người) **$0.9901** · cao (431 người) **$2.00**. Quy mô từ `evidence/data-mining.md`; dùng ba nhóm làm kịch bản triển khai là tự ước tính. So sánh giả định giá Gemini trong `cost/cost-estimate.md`.
-- So với impact / người / tháng (§2): 24 phút (tự ước tính) so với $0.0046/người/tháng ở kịch bản cơ sở. Chi phí model thấp nhưng chưa kết luận đáng triển khai khi còn lỗi chọn đoạn/đánh giá sai và chưa có tỷ lệ đạt đã duyệt.
+- Persona và giá ở [cost/personas.yaml](cost/personas.yaml). [Lượt mô phỏng 2](cost/simulate-2-summary.md) đo 50 phiên, seed 42, 0 lỗi runtime. Hành vi và tỷ trọng persona là tự ước tính theo §2.
+- Tỷ lệ đạt dùng để tính chi phí là **20/22 (90,9%)**, lấy từ lượt `run-2@20261128-071526`. Với `gpt-5.4-mini-2026-03-17`, chi phí ước tính **$0.0013/phiên** và **$0.0014/task thành công**.
+- Chi phí model mỗi tháng ước tính ở quy mô thấp (177 người) **$1.37**, cơ sở (213 người) **$1.65**, cao (431 người) **$3.35**. Quy mô lấy từ [evidence/data-mining.md](evidence/data-mining.md). Việc dùng ba nhóm này làm kịch bản triển khai là tự ước tính. [Bảng chi phí](cost/cost-estimate.md) có thêm hai dòng giả định giá Gemini tính trên token đo bằng GPT.
+- So với §2, chi phí model cơ sở là **$0.0078/người/tháng**. Thời gian vướng ước tính là **24 phút/người/tháng**. Mức tiết kiệm thời gian thực tế chưa được đo.
 
 ## §9. Rủi ro & an toàn
 - Dữ liệu: đã ẩn danh gì, không thu gì, không đưa gì vào model gói miễn phí:
