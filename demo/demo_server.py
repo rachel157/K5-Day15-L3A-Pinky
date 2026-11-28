@@ -13,10 +13,14 @@ import os
 import re
 import sys
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import urlsplit
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEMO = os.path.join(ROOT, "demo")
 LESSON_PATH = os.path.join(ROOT, "data", "lesson.json")
+VIDEO_PATH = "/assets/agent-video-internal-demo.mp4"
+DEMO_VIDEO_URL = os.environ.get("DEMO_VIDEO_URL", "").strip()
+MAX_JSON_BYTES = 16 * 1024
 sys.path.insert(0, os.path.join(ROOT, "codebase"))
 
 import tracing  # noqa: E402
@@ -244,8 +248,29 @@ class Handler(SimpleHTTPRequestHandler):
                     break
                 remaining -= len(chunk)
 
+    def send_head(self):
+        clean_path = urlsplit(self.path).path
+        if clean_path not in {"/", "/index.html", VIDEO_PATH}:
+            self.send_error(404)
+            return None
+        if clean_path == VIDEO_PATH and not os.path.isfile(self.translate_path(self.path)):
+            video_url = urlsplit(DEMO_VIDEO_URL)
+            if video_url.scheme == "https" and video_url.hostname:
+                self.send_response(307)
+                self.send_header("Location", DEMO_VIDEO_URL)
+                self.send_header("Cache-Control", "no-store")
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return None
+            self.send_error(404)
+            return None
+        return super().send_head()
+
     def do_GET(self):
-        clean_path = self.path.split("?")[0]
+        clean_path = urlsplit(self.path).path
+        if clean_path == "/api/health":
+            self._send_json(200, {"status": "ok"})
+            return
         if clean_path == "/api/lesson":
             try:
                 with open(LESSON_PATH, encoding="utf-8") as f:
@@ -256,7 +281,7 @@ class Handler(SimpleHTTPRequestHandler):
             return
 
         local_path = self.translate_path(self.path)
-        if os.path.isfile(local_path) and local_path.lower().endswith(".mp4"):
+        if clean_path == VIDEO_PATH and os.path.isfile(local_path):
             self._serve_range_file(local_path, "video/mp4")
             return
 
@@ -270,7 +295,19 @@ class Handler(SimpleHTTPRequestHandler):
 
         try:
             length = int(self.headers.get("Content-Length", "0"))
+            if length > MAX_JSON_BYTES:
+                self._send_json(413, {"error": "Nội dung gửi quá dài."})
+                return
+            if length < 1:
+                raise ValueError("empty body")
             body = json.loads(self.rfile.read(length).decode("utf-8"))
+            if not isinstance(body, dict):
+                raise ValueError("expected an object")
+        except ValueError:
+            self._send_json(400, {"error": "Yêu cầu cần một đối tượng JSON hợp lệ."})
+            return
+
+        try:
 
             if clean_path == "/api/chat":
                 tracing.begin("demo-chat")
@@ -313,6 +350,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    host = os.environ.get("HOST", "127.0.0.1")
     port = int(os.environ.get("PORT", "8765"))
-    print(f"Checkpoint Tutor Demo UI: http://127.0.0.1:{port}")
-    ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()
+    print(f"Checkpoint Tutor Demo UI: http://{host}:{port}")
+    ThreadingHTTPServer((host, port), Handler).serve_forever()

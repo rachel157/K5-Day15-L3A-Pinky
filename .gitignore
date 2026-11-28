@@ -40,3 +40,7 @@ data/training-ops/
 # File video MP4 demo nội bộ dung lượng lớn (không commit lên GitHub)
 *.mp4
 demo/assets/*.mp4
+
+# Kết quả build và liên kết Vercel cục bộ
+/dist/
+/.vercel/

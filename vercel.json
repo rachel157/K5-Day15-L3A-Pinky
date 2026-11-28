@@ -1,0 +1,22 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "",
+  "buildCommand": "node scripts/build-vercel.mjs",
+  "outputDirectory": "dist",
+  "functions": {
+    "api/dispatch.py": {
+      "maxDuration": 90
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/:endpoint(health|lesson|answer|chat)",
+      "destination": "/api/dispatch?endpoint=:endpoint"
+    },
+    {
+      "source": "/assets/agent-video-internal-demo.mp4",
+      "destination": "/api/dispatch?endpoint=video"
+    }
+  ]
+}

@@ -134,6 +134,7 @@ Ngày 27/11/2026 đã thử input `Reply briefly with OK.`, nhận `OK` từ
 kết quả ở [eval/run-1.csv](eval/run-1.csv), lỗi nội dung ở [eval/report.md](eval/report.md).
 Dữ liệu bài giảng vẫn là bản tóm tắt synthetic, chưa kết nối LMS thật.
 Hướng dẫn chi tiết: [Nối model](docs/connect-model.md).
+Cấu hình cloud: [Triển khai trên Render và Vercel](docs/deploy.md).
 
 Trình tự vận hành: `python run.py eval --try` → `python run.py eval` →
 người duyệt chấm `pass` → `python run.py score eval/run-1.csv`.
