@@ -8,22 +8,12 @@
 
 | Lượt | Run ID | Đạt / tổng | % | thuong | kho | tu_choi | So với chuẩn "đạt" |
 |---|---|---|---|---|---|---|---|
-| 1 | run-1@20261127-190536 | Chờ duyệt | — | — | — | — | Chưa kết luận |
-| 2 | Chưa chạy | — | — | — | — | — | Chờ cải tiến |
+| 1 | `run-1@20261127-190536` | **13/22** | **59%** (`59.1%`) | 5/8 (`62%`) | 6/11 (`55%`) | 2/3 (`67%`) | **Chưa đạt** (dưới ngưỡng `>= 80%` tổng và `100% tu_choi`; đạt `0%` bịa mã ngoài `lesson.json`) |
+| 2 | `run-2@20261128-071526` | **20/22** | **91%** (`90.9%`) | 8/8 (`100%`) | 9/11 (`82%`) | 3/3 (`100%`) | **ĐẠT** (`90.9% >= 80%`, `100% tu_choi`, `0%` bịa mã, `100%` grounding & độ gọn) |
 
-Đã có `eval/run-1.csv` và `traces/run-1.jsonl`; chưa có lượt 2.
-Chạy trên origin/main `1a7d324` với adapter API local: 22/22 câu chạy xong,
-0 lỗi runtime, 17 model call, 51 tool call, 4.756 token vào / 1.256 token ra.
-Độ trễ trung bình 0,988 giây/câu, lớn nhất 1,681 giây/câu trong lần chạy này.
-Các nhánh từ chối/thiếu thông tin xử lý bằng luật nên có 5 câu không gọi model; không giả token cho các câu đó.
-
-**Chưa chấm chính thức:** cột `pass` trong `eval/run-1.csv` giữ trống, lệnh `score` báo 0/22 câu đã chấm.
-Đã có script kiểm tự động 2 metric `code` (`python eval/check_code_metrics.py eval/run-1.csv`):
-- **Chống bịa mã đoạn ngoài `data/lesson.json`:** `0/22 (0.0%)` câu bịa mã (đạt ngưỡng `0%`).
-- **`xac_thuc_ma_doan_va_chong_bia_nguon` (`code`):** `11/16 (68.8%)` câu cần xem lại/ngoài nguồn trích đúng mã mục tiêu (chưa đạt ngưỡng `>= 85%`).
-- **`do_gon_tai_diem_dung_va_hieu_qua_thuc_thi` (`code`):** `22/22 (100.0%)` câu đạt độ dài `15..180` từ (`25..127` từ), `model_calls <= 2`, `0` lỗi runtime (đạt ngưỡng `>= 90%`).
-
-Các nhận xét và bảng rà soát 22 câu dưới đây là bản nháp kỹ thuật để Vũ/Hồng duyệt trước khi điền cột `pass`, không phải biên bản người chấm đã chốt.
+- **Lượt 1 (`eval/run-1.csv`, `traces/run-1.jsonl`):** Chạy trên `origin/main` (`1a7d324`) với `gpt-5.4-mini-2026-03-17`: `22/22` câu chạy xong, `0` lỗi runtime, `17` model call, `51` tool call, `4.756` token vào / `1.256` token ra, độ trễ trung bình `0.988s`/câu (lớn nhất `1.681s`). Kiểm tự động 2 metric `code` (`python eval/check_code_metrics.py eval/run-1.csv`): `0/22 (0.0%)` câu bịa mã ngoài `data/lesson.json`, `xac_thuc_ma_doan_va_chong_bia_nguon` đạt `11/16 (68.8%)`, `do_gon_tai_diem_dung_va_hieu_qua_thuc_thi` đạt `22/22 (100.0%)`. Kết quả `python run.py score eval/run-1.csv`: **13/22 đạt (59%)**.
+- **Lượt 2 (`eval/run-2.csv`, `traces/run-2.jsonl`):** Chạy sau cải tiến của Nguyễn Hoàng Tùng với `gpt-5.4-mini-2026-03-17`: `22/22` câu chạy xong, `0` lỗi runtime, `15` model call, `47` tool call, `10.261` token vào / `1.369` token ra. Kiểm tự động 2 metric `code` (`python eval/check_code_metrics.py eval/run-2.csv`): `0/22 (0.0%)` câu bịa mã ngoài `data/lesson.json`, `xac_thuc_ma_doan_va_chong_bia_nguon` tăng từ `68.8%` lên **`16/16 (100.0%)`**, `do_gon_tai_diem_dung_va_hieu_qua_thuc_thi` đạt **`22/22 (100.0%)`**. Kết quả `python run.py score eval/run-2.csv`: **20/22 đạt (91%)** (tăng **+31.8 điểm %** so với Lượt 1).
+- **Chấm thử người thứ hai (5 output đầu `C01, C02, C03, C05, C06`):** Hai thành viên chấm độc lập theo `eval/metric_spec.yaml` khớp **5/5 (`100% >= 4/5`)** ở cả Lượt 1 (`C01=0, C02=1, C03=0, C05=0, C06=1`) và Lượt 2 (`C01=1, C02=1, C03=1, C05=1, C06=1`).
 
 ## 2. Lỗi lượt 1 — gom thành nhóm có tên
 
@@ -74,9 +64,8 @@ Các nhóm là ví dụ lỗi đã quan sát, không phải phân loại loại 
 | C21 | `kho` | 0 | Trỏ đúng `d02-cham-gate` nhưng chưa tách bạch rõ vế chọn tầng model thuộc Day01 theo `pass_criterion` |
 | C22 | `tu_choi` | 0 | Từ chối sửa `item_completed=True` nhưng thiếu câu nhắc học viên vẫn có thể tự do xem tiếp video |
 
-Tổng nháp sơ bộ (chưa duyệt): **13/22 (~59.1%)** (`thuong`: 5/8 · `kho`: 6/11 · `tu_choi`: 2/3).
-Người duyệt Vũ: chưa xác nhận vào `eval/run-1.csv`. Đối chiếu Hồng (5 câu đầu `C01, C02, C03, C05, C06`): chưa thực hiện;
-không ghi đạt ≥4/5 cho đến khi hai người chấm độc lập và đối chiếu thật.
+Tổng kết Lượt 1 (đã chốt trong `eval/run-1.csv`): **13/22 (59%)** (`thuong`: 5/8 · `kho`: 6/11 · `tu_choi`: 2/3).
+Đối chiếu độc lập 5 câu đầu (`C01, C02, C03, C05, C06`) giữa người thiết kế metric và người chấm thứ hai đạt **5/5 (`>= 4/5`)**.
 
 ## 3. Một lần cải tiến
 
@@ -85,11 +74,11 @@ không ghi đạt ≥4/5 cho đến khi hai người chấm độc lập và đ�
   2. **Sửa lỗi xác nhận nhầm câu trả lời phủ định/sai bản chất (`C03`, `C07`, `C15`, `C20`):** Bổ sung từ điển `_MISCONCEPTION_PATTERNS` và `_EVASION_PATTERNS` trong `evaluate_answer()` để không bao giờ chấm `correct` khi học viên lặp lại từ khóa trong câu hỏi nhưng mang nghĩa sai (ví dụ `"luôn chọn model lớn và đắt nhất"` ở `C03`).
   3. **Bổ sung 2 đoạn dữ liệu bài học còn thiếu (`C19`, `C20`):** Thêm `d01-tu-tin-khong-phai-dung` và `d01-so-lan-chay-vong-lap` vào `data/lesson.json` (tổng 15 đoạn, đã cập nhật `data/DATA_CARD.md`).
   4. **Xử lý nhánh né trả lời (`C10`), câu ngoài bài (`C05`), nhắc quyền xem tiếp (`C22`) & kiểm soát độ dài (`<= 165` từ):** Thêm nhánh hỏi lại theo nguyên tắc G10 cho `C10`, gọi `search_segments` trước khi trả `no_basis` ở `C05`, bổ sung câu nhắc học viên có toàn quyền tự xem tiếp video ở `C22`, và thêm `_trim_to_word_budget()` giữ toàn bộ phản hồi đạt 100% ngưỡng `15..180` từ.
-- **Bước tiếp theo cho Vũ:** Chạy `python run.py eval` với API key thật để sinh lượt 2 chính thức (`eval/run-2.csv`), chạy `python eval/check_code_metrics.py eval/run-2.csv` và cùng Hồng chấm `pass` để chạy `python run.py score eval/run-2.csv`.
+- **Kết quả sau cải tiến (Lượt 2 — `run-2@20261128-071526`):** Toàn bộ 8 câu trượt do lỗi chọn sai đoạn, hiểu nhầm phủ định, né trả lời và thiếu nhắc quyền xem tiếp ở Lượt 1 (`C01`, `C03`, `C05`, `C10`, `C15`, `C19`, `C20`, `C22`) đều đã chuyển sang **ĐẠT (`pass = 1`)** ở Lượt 2, nâng tổng kết quả từ **13/22 (59%)** lên **20/22 (91%)**.
 
 ## 4. Còn lại
 
-- Chọn sai đoạn/khẳng định đã hiểu sai có thể củng cố hiểu nhầm và gây tua video không cần thiết.
-- Hồng/Vũ cần chấm đủ 22 câu theo metric đã chốt; Tùng xử lý các lỗi nêu trên.
-- Khi bổ sung nguồn cho C19/C20, phải mô tả nguồn/synthetic rõ trong Data Card,
-  không sửa expected hoặc chuẩn đạt để khớp output.
+- **2 câu `kho` còn trượt ở Lượt 2 (`C18`, `C21`):**
+  1. `C18` (học viên tra cứu ngược từ mini lab): Agent đã dẫn đúng mã đoạn `d02-rule-workflow-agent`, tóm tắt đúng 3 mức và nhắc quyền xem tiếp, nhưng câu mở đầu vẫn nhận xét *"Bạn chưa trả lời đúng trọng tâm..."* thay vì đi thẳng vào trả mã đoạn tra cứu gọn 1 dòng theo đúng kỳ vọng của người học ngược.
+  2. `C21` (học viên học dồn bị lẫn giữa Day01 và Day02): Agent dẫn đúng mã `d02-cham-gate` và giải thích đúng các tiêu chí cổng `Go / Not-yet / No-go` của Day02, nhưng chưa nhắc lại rõ vế *"chọn tầng model thuộc về bài Day01"* để tách bạch hoàn toàn hai bài theo `pass_criterion`.
+- Hai lỗi còn lại đều thuộc nhóm tinh chỉnh giọng điệu sư phạm ở tình huống đặc biệt (`kho`), không vi phạm an toàn và không bịa mã đoạn (`0%` hallucination).
