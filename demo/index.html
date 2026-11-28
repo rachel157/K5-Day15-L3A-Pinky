@@ -887,9 +887,9 @@ body {
   right: 0;
   bottom: calc(100% + 6px);
   width: 390px;
-  max-height: 310px;
+  max-height: 290px;
   overflow-y: auto;
-  overflow-x: auto;
+  overflow-x: hidden;
   overscroll-behavior: contain;
   background: #0d1f16;
   color: #d9f3e4;
@@ -907,6 +907,11 @@ body {
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.15s ease, visibility 0.15s ease;
+}
+
+.chat-msg .raw-popover {
+  width: 288px;
+  max-height: 240px;
 }
 
 .raw-info-wrap:hover .raw-popover,
@@ -1214,6 +1219,8 @@ body {
 
 .chat-msg.bot {
   align-self: flex-start;
+  width: 100%;
+  max-width: 100%;
   background: #ffffff;
   border: 1px solid var(--border);
   color: var(--text);
