@@ -37,6 +37,6 @@ data-btc
 data-btc/
 data/preclass/
 data/training-ops/
-# File video MP4 demo nội bộ dung lượng lớn (không commit lên GitHub)
+# File video MP4 dung lượng lớn (ngoại trừ video bài giảng demo 2.7MB đã nén chuẩn H.264+AAC)
 *.mp4
-demo/assets/*.mp4
+!demo/assets/agent-video-internal-demo.mp4
