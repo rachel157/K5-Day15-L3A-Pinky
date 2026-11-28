@@ -16,6 +16,7 @@ cost/
 traces/
 reflection/
 *.mp4
+!demo/assets/agent-video-internal-demo.mp4
 *.pem
 *service-account*.json
 credentials*.json
