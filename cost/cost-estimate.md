@@ -3,7 +3,7 @@
 ## 1. Đầu vào
 
 - Cấu hình: `cost/personas.yaml`, 50 phiên, seed 42; 3 persona, tổng share = 1.
-- `dung_it`: 50%, 2 phiên/người/tháng, 1 lượt/phiên; `dung_vua`: 30%, 6 phiên/tháng, 2 lượt/phiên; `dung_nhieu`: 20%, 10 phiên/tháng, 3 lượt/phiên. Tỷ trọng và số lượt là **tự ước tính**; tần suất bám `spec.md` §2, chưa có xác nhận phỏng vấn.
+- `dung_it`: 50%, 2 phiên/người/tháng, 1 lượt/phiên; `dung_vua`: 30%, 6 phiên/tháng, 2 lượt/phiên; `dung_nhieu`: 20%, 10 phiên/tháng, 3 lượt/phiên. Tỷ trọng và số lượt hỏi mỗi phiên là ***(tự ước tính)***; tần suất cơ sở `6 phiên/tháng` bám `spec.md` §2 và khớp với dải phỏng vấn thực tế `P1=6, P2=6, P3=3` lần/tháng (`evidence/summary.md`).
 - Ba kịch bản: thấp 177 người từng tua lùi, cơ sở 213 người mở lại video, cao 431 người từng mở video. Số từ `evidence/data-mining.md`/`spec.md` §1–2; lựa chọn ba nhóm làm quy mô triển khai là **tự ước tính**, không cộng các nhóm chồng lấn.
 - Token thực đo trên **gpt-5.4-mini-2026-03-17**. Tính giá OpenAI và so sánh giả định giá Gemini; chưa đo chất lượng hoặc token thực tế trên Gemini.
 - Giá Standard text, USD/1 triệu token vào/ra: OpenAI 0.75/4.50 ([nguồn](https://developers.openai.com/api/docs/models/gpt-5.4-mini.md)); Gemini 3.1 Flash-Lite 0.25/1.50 và Gemini 3.5 Flash-Lite 0.30/2.50 ([nguồn](https://aistudio.google.com/docs/pricing)). Xem 27/11/2026.
