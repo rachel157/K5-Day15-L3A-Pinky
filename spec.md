@@ -166,4 +166,4 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): `data/prec
 
 | Thời điểm | Đổi gì | Vì sao |
 |---|---|---|
-|  |  |  |
+| 28/11/2026 20:38 | Đồng bộ nhánh `main` với `origin/main`, giữ bản video bài giảng Day01 đã nén `2.7MB` (`demo/assets/agent-video-internal-demo.mp4`), bản giao diện `demo/index.html` và đủ 4 file reflection cá nhân (`reflection/`) | Đảm bảo toàn bộ tài liệu CP4 (`demo-slides.pdf`, `eval/run-2.csv` đã chấm, `cost/simulate-2.csv`, `evidence/`, `reflection/`) đồng nhất trên `origin/main` trước hạn chót 23:59. |
